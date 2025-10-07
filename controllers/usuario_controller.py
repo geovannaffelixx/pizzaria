@@ -1,27 +1,26 @@
-from sqlalchemy.orm import Session
-from models.usuario import UsuarioDB, UsuarioCreate, UsuarioUpdate
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
+from services.usuario import UsuarioService
+from models.usuario import UsuarioCreate, UsuarioUpdate
 
 class UsuarioController:
+    def __init__(self):
+        self.service = UsuarioService()
+
     def listar_usuarios(self, db: Session):
-        return db.query(UsuarioDB).all()
+        return self.service.listar(db)
 
     def criar_usuario(self, usuario: UsuarioCreate, db: Session):
-        novo = UsuarioDB(nome=usuario.nome, tipo=usuario.tipo)
-        db.add(novo); db.commit(); db.refresh(novo)
-        return novo
+        return self.service.criar(usuario, db)
 
     def atualizar_usuario(self, usuario_id: int, dados: UsuarioUpdate, db: Session):
-        u = db.query(UsuarioDB).filter(UsuarioDB.id == usuario_id).first()
+        u = self.service.atualizar(usuario_id, dados, db)
         if not u:
             raise HTTPException(status_code=404, detail="Usuário não encontrado")
-        u.nome, u.tipo = dados.nome, dados.tipo
-        db.commit(); db.refresh(u)
         return u
 
     def deletar_usuario(self, usuario_id: int, db: Session):
-        u = db.query(UsuarioDB).filter(UsuarioDB.id == usuario_id).first()
+        u = self.service.deletar(usuario_id, db)
         if not u:
             raise HTTPException(status_code=404, detail="Usuário não encontrado")
-        db.delete(u); db.commit()
         return {"mensagem": f"Usuário {u.nome} removido com sucesso"}

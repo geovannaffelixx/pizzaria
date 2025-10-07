@@ -25,7 +25,10 @@ Dentro da pasta do projeto
 py -m venv .venv
 source .venv/Scripts/activate
 pip install fastapi uvicorn sqlalchemy python-jose[cryptography]
+
 uvicorn main:app --reload
+ou
+py -m uvicorn main:app --reload 
 
 
 - Acesse

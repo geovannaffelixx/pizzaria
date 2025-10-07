@@ -4,7 +4,7 @@ from models.usuario import UsuarioDB
 from database.config import get_db
 from JWT.auth import criar_token
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
+router = APIRouter(prefix="/auth", tags=["Autenticação"])
 
 @router.post("/login")
 def login(nome: str, tipo: str, db: Session = Depends(get_db)):
